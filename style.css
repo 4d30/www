@@ -1,0 +1,81 @@
+
+body {
+ margin: 10px 10px 0px 0px;
+ padding: 20px 0px 0px 20px;
+ background-color: #778899;
+}
+img { 
+  float: right;  
+  margin: 5px; 
+} 
+p {
+ font-family: sans-serif, Georgia, "Times New Roman", Times, serif;
+ font-size: 16px;
+ color: #000000;
+}
+h1 {
+ font-family: sans-serif, Arial, Helvetica, sans-serif;
+ font-size: 36px;
+ font-weight: bold;
+ color: #000000;
+}
+
+h2 {
+ font-family: sans-serif, Arial, Helvetica, sans-serif;
+ font-size: 24px;
+ font-weight: bold;
+ color: #000000;
+}
+
+h3 {
+ font-family: sans-serif, Arial, Helvetica, sans-serif;
+ font-size: 22px;
+ font-weight: bold;
+ color: #000000;
+}
+
+h4 {
+ font-family: sans-serif, Arial, Helvetica, sans-serif;
+ font-size: 16px;
+ font-weight: bold;
+ color: #000000;
+}
+
+
+a:link {
+ font-weight: normal;
+ font-size: 16px;
+ font-family: sans-serif, Arial, Helvetica, sans-serif;
+ text-decoration: underline;
+ color: #0000cc;
+ }
+a:visited {
+ font-weight: normal;
+ font-size: 16px;
+ font-family: sans-serif, Arial, Helvetica, sans-serif;
+ text-decoration: underline;
+ color: #990000;
+ }
+a:hover {
+ font-weight: normal;
+ font-size: 16px;
+ font-family: sans-serif, Arial, Helvetica, sans-serif;
+ text-decoration: none;
+ color: #0000cc;
+ background: #ff9933;
+ }
+a:active {
+ font-weight: normal;
+ font-size: 16px;
+ font-family: sans-serif, Arial, Helvetica, sans-serif;
+ text-decoration: none;
+ color: #ffffff;
+ background: #cc0000;
+ }
+ 
+ li {
+ list-style-position: outside;
+ list-style-image: url(images/bullet.gif);
+ font-family: sans-serif, Arial, Helvetica, sans-serif;
+ font-size: 16px;
+}

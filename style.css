@@ -1,13 +1,40 @@
+html {
+ background-image: url(obsd.jpg);
+ background-repeat: repeat;
+}
 
 body {
  margin: 10px 10px 0px 0px;
  padding: 20px 0px 0px 20px;
- background-color: #778899;
+ /* background-color: #778899;*/
 }
 img { 
   float: right;  
-  margin: 5px; 
+  margin: 5px;
 } 
+
+#main-table table {
+ border: 1px solid black;
+}
+
+table[id="main-table"] {
+ border: 1px solid black;
+}
+
+#main-header td { 
+ background-color: #ffffff;
+ border: 1px solid black;
+}
+
+td[id="main-header"] {
+ background-color: #6495ed;
+}
+
+td[id="main-content"] {
+ background-color: #ffffff;
+}
+
+
 p {
  font-family: sans-serif, Georgia, "Times New Roman", Times, serif;
  font-size: 16px;
@@ -27,19 +54,6 @@ h2 {
  color: #000000;
 }
 
-h3 {
- font-family: sans-serif, Arial, Helvetica, sans-serif;
- font-size: 22px;
- font-weight: bold;
- color: #000000;
-}
-
-h4 {
- font-family: sans-serif, Arial, Helvetica, sans-serif;
- font-size: 16px;
- font-weight: bold;
- color: #000000;
-}
 
 
 a:link {

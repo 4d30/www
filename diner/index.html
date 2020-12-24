@@ -1,0 +1,679 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2016 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Placing a Diner in Brooklyn, NY1</TITLE>
+<META NAME="description" CONTENT="Placing a Diner in Brooklyn, NY1">
+<META NAME="keywords" CONTENT="diner">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2016">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="diner.css">
+
+</HEAD>
+
+<BODY >
+
+<H1 ALIGN="CENTER">Placing a Diner in Brooklyn, NY<A NAME="tex2html1"
+  HREF="#foot7"><SUP><SPAN CLASS="arabic">1</SPAN></SUP></A></H1>
+<DIV CLASS="author_info">
+
+<P ALIGN="CENTER"><STRONG>Joseph Mifsud</STRONG></P>
+<P ALIGN="CENTER"><I>		Hungry for Opportunity</I></P>
+<P ALIGN="CENTER"><STRONG>December 20, 2020</STRONG></P>
+</DIV>
+
+<H3>Abstract:</H3>
+<DIV CLASS="ABSTRACT">
+
+<P>
+A study was performed to identify optimal locations to open a diner catering to the hipster demographic in Brooklyn, NY. 
+	Brooklyn was algorithmically tessellated into a hexagonal grid of neighborhoods. 
+	Foursquare's Places API was used to fetch data on a set of relevant venues in each neighborhood. 
+	Neighborhoods were clustered with DBSCAN to identify neighborhoods of low hipster-density. 
+	A cost-function was defined to optimize the ratio between the target demographic and competitive venues.
+	Four locations of were identified to a position within 600m.
+</DIV>
+<P>
+
+<P>
+
+<H1><A NAME="SECTION00010000000000000000">
+Introduction</A>
+</H1>
+
+<H2><A NAME="SECTION00011000000000000000">
+Background</A>
+</H2>
+	The cozy and relaxed nature of a diner makes them a popular option for dining out.
+	As a small business, the diner offers its stakeholders the opportunity for lucrative financial gain within a relatively short amount of time.
+	A well-placed diner has greater opportunity for success than the misplaced.
+	Siting a diner in Brooklyn requires defining a target market.
+
+<P>
+Brooklyn NY's estimated population of 2.6 million yields one of the most diverse and competitive markets for the food service industry in the world.
+	Of Brooklyn's most affluent denizens are the members of the contemporary hipster subculture.
+	According to Wikipedia, the term hipster is "mostly associated with perceived upper-middle-class white young adults who gentrify urban areas."
+	The contemporary hipster is a subset of the Millenial generation which makes up 27% of the population and contributes $1.3 trillion in annual consumer spending.
+	Hipsters have considerable purchasing power.
+	Therefore, it is advantageous for entrepreneurs tapping into this market to accurately determine locations conducive to their venture.
+
+<P>
+
+<H2><A NAME="SECTION00012000000000000000">
+Problem</A>
+</H2>	
+	Locating the target demographic as well as competitive regions requires an assumption and data.
+	The assumption made is that regions with organic grocery stores, independent movie theaters, bicycle shops, and flea markets indicate the presence of members of the target demographic.
+	This assumption is entirely heuristic.
+	Notwithstanding, precedence for this technique is provided by MoveHub, a British marketing and logistics firm, who created a "Hipster Index" in 2017 using similar types of venue.
+
+<P>
+The data required is the the location and type of venues, both hipster and competitive, in Brooklyn.
+	This project aims to find locations where the target demographic is and competition is not.
+	Further, an attempt is made to prefer locations that are located near major transportation infrastructure such as the Brooklyn, Manhattan, and Williamsburg Bridges.
+
+<P>
+
+<H2><A NAME="SECTION00013000000000000000">
+Interest</A>
+</H2>
+	This information is most valuable to entrepreneurs. 
+	In addition, the information extracted from this study may also be of interest to real estate developers and investors.
+	Other interested parties may include those conducting research on demographics in the region.
+
+<P>
+
+<H1><A NAME="SECTION00020000000000000000"></A> <A NAME="documentclasses"></A>
+<BR>
+Data
+</H1>
+
+<H2><A NAME="SECTION00021000000000000000">
+Data Sources</A>
+</H2>
+	There were three types of data collected for this study.
+	First, coordinates from OSM's Geocoding API were used to define a target region for the study.
+	Second, addresses from OSM's Reverse Geocoding API were used to associate an address with each subregion, or neighborhood, within the target region.
+	Finally, Foursquare's Places API provided the venue data necessary for this study.
+
+<P>
+The venue data is the largest component of the project on a storage size basis.
+	For each neighborhood, it contains information for each venue.
+	The data provided by Foursquare for venues include a unique ID, the name, its geographic coordinates, a category indicating type, as well as the distance between the queried point and the venue in meters.
+	For example the category might be "Tire Shop" or "Fast Food Restaurant."
+	This category data is used to identify competition for the proposed diner such as cafes.
+	In addition, venue categories were used as an indicator for neighborhoods that contain the target demographic.
+
+<P>
+
+<H2><A NAME="SECTION00022000000000000000">
+Data Cleaning</A>
+</H2>
+	There were two aspects of the data that were considered for cleaning.
+	First, the target region included areas of the Hudson River Estuary.
+	Obviously, neighborhoods in Upper New York Bay are not be suitable for recommendation to stakeholders.
+	These neighborhoods were not removed from the study or treated any differently that any other neighborhood.
+	It was correctly believed that analysis would not lead to a recommendation of these areas in the first place.
+
+<P>
+The second aspect of the data concerns the categorical values from the Places API.
+	It is the case that a single venue may belong to multiple categories.
+	For example, Whole Foods Market may belong to the "Organic Grocery Store" category and the "Grocery Store" category.
+	For this reason, when a request was sent for organic grocery stores the venues returned may or may not include the category "Organic Grocery Store."
+	To remedy the case of secondary categories, a list was compiled of all the categories returned by Foursquares Places API when queried with the venues defined as indicators for the presence of the target population.
+	If a venue's category was on this list, it would be considered an indicator of the presence of members of the hipster subculture.
+
+<P>
+
+<H2><A NAME="SECTION00023000000000000000">
+Feature Selection</A>
+</H2>
+	This study is primarily concerned with three characteristics of a neighborhood.
+	<DL COMPACT>
+<DD>Whether or not if contains members of the hipster subculture
+		
+</DD>
+<DD>The amount of competition
+		
+</DD>
+<DD>The location in relation to major transportation infrastructure 
+	
+</DD>
+</DL>
+
+<P>
+Features were selected to capture information related to these characteristics.
+	In an effort to indicate the presence of members of the hipster subculture, specific categories of venues were queried.
+	These venues are the following: 
+	<DIV ALIGN="CENTER">
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="CENTER">Organic Grocery Store</TD>
+<TD ALIGN="CENTER">Bike Shop</TD>
+</TR>
+<TR><TD ALIGN="CENTER">Indie Movie Theater</TD>
+<TD ALIGN="CENTER">Flea Market</TD>
+</TR>
+</TABLE> 
+<BR>	
+</DIV>
+It is noted that no restaurants or coffee shops are used to indicate the presence of the target market.
+	Restaurants and coffee shops will be competing with the proposed diner. 
+	They are sought when selecting features identifying the characteristics of the competition.	
+	The categories of venue used to locate and quantify the competition were: 
+	<DIV ALIGN="CENTER">
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="CENTER">Diners</TD>
+<TD ALIGN="CENTER">Coffee Shops</TD>
+<TD ALIGN="CENTER">Cafes</TD>
+<TD ALIGN="CENTER">Breakfast Spots</TD>
+</TR>
+<TR><TD ALIGN="CENTER">Burger Joints</TD>
+<TD ALIGN="CENTER">Sandwich Places</TD>
+<TD ALIGN="CENTER">Greek Restaurants</TD>
+<TD ALIGN="CENTER">&nbsp;</TD>
+</TR>
+</TABLE>
+</DIV>
+
+<P>
+It is self-evident that the location of a neighborhood will be critical in determining where to place the proposed establishment.
+	All locations in the study are communicated in latitude and longitude until the final results are given.
+	In the results section, the coordinates of locations are translated to a street address.
+
+<P>
+
+<H1><A NAME="SECTION00030000000000000000">
+Methodology</A>
+</H1>
+
+<H2><A NAME="SECTION00031000000000000000">
+Exploratory Data Analysis</A>
+</H2>
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="fig:citymap"></A><A NAME="38"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 1:</STRONG>
+A map of the studied neighborhoods.</CAPTION>
+<TR><TD><IMG
+  WIDTH="650" HEIGHT="488" ALIGN="BOTTOM" BORDER="0"
+ SRC="./citymap.png"
+ ALT="Image citymap"></TD></TR>
+</TABLE>
+</DIV>
+The target region of Brooklyn has been divided into 183 circular areas with a radius of 600m.
+	Each circular area, referred to as a neighborhood, has been assigned a neighborhood number to uniquely identify it.
+	Figure <A HREF="#fig:citymap">1</A> is a map of the target region which shows the boundaries of each neighborhood in this study.
+	Venues, both indicative of hipsters and the competition, were fetched from Foursquare for each neighborhood.
+	In total, data from 3024 venues were collected.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="fig:hood146"></A><A NAME="44"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 2:</STRONG>
+A sample of typical neighborhood data</CAPTION>
+<TR><TD><IMG
+  WIDTH="650" HEIGHT="410" ALIGN="BOTTOM" BORDER="0"
+ SRC="./hood146.png"
+ ALT="Image hood146"></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+Figure <A HREF="#fig:hood146">2</A> is a sample of the data for neighborhood number 146.
+	There are multiple columns in <A HREF="#fig:hood146">2</A>
+	The "hood_no" column indicates to which circular neighborhood, described in figure <A HREF="#fig:citymap">1</A>, the venue belongs.
+	There is a column to hold the primary category which described the venue.
+	As mentioned above, it is possible that a venue belong to more than one category.
+	The "name" column is self-explanatory.
+	The "coords_venue" parameter holds onto the geographic coordinates for each venue measured in degrees North and West.
+	"Distance" describes the displacement of the venue from the neighborhood of corresponding neighborhood number.
+	Finally, there is a column to keep track of whether the venue is considered relevant to the target market or to the competition.
+	All venues were plotted onto a map of Brooklyn in figure <A HREF="#fig:venues_map">3</A>.
+profile 
+
+<DIV ALIGN="CENTER"><A NAME="fig:venues_map"></A><A NAME="53"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 3:</STRONG>
+A map of the target region. Venues that are in competition with a proposed diner are plotted in red. Venues indicating the presence of hipsters are in blue.</CAPTION>
+<TR><TD><IMG
+  WIDTH="650" HEIGHT="488" ALIGN="BOTTOM" BORDER="0"
+ SRC="./venues_map.png"
+ ALT="Image venues_map"></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+The map of venues suggests that there are more venues closer to Manhattan than Jamaica Bay.
+	To get a better understanding of what is going on, a heat map of the venues indicating the target market was created.
+
+<DIV ALIGN="CENTER"><A NAME="fig:hipster_heatmap"></A><A NAME="58"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 4:</STRONG>
+A heat map of venues which indicates the presence of members of the hipster subculture.</CAPTION>
+<TR><TD><IMG
+  WIDTH="650" HEIGHT="488" ALIGN="BOTTOM" BORDER="0"
+ SRC="./hipster_heatmap.png"
+ ALT="Image hipster_heatmap"></TD></TR>
+</TABLE>
+</DIV>
+Figure <A HREF="#fig:hipster_heatmap">4</A> shows the density of hipster venues in the target region.
+	The density of hipster-venues varies throughout Brooklyn.
+	This suggests that some areas will be more well-suited for a diner catered to this demographic.
+	There is the greatest density of hipster venues in the regions between the East River and Jamaica Avenue as well as the Upper New York Bay and the Fort Hamilton Parkway.
+	In the analysis portion of this study an attempt will be made to cluster neighborhoods together on the density of hipster venues.
+	The goal of such a clustering will be to separate neighborhoods that have a low hipster density.
+	It is likely that in the end of our study, a neighborhood indicated by this heat map will be recommended as suitable for the proposed diner.
+
+<P>
+Correspondingly, a heat map was created to visualize the competition in the region.
+
+<DIV ALIGN="CENTER"><A NAME="fig:comp_heatmap"></A><A NAME="64"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 5:</STRONG>
+A heat map of venues in direct competition with the proposed diner.</CAPTION>
+<TR><TD><IMG
+  WIDTH="650" HEIGHT="487" ALIGN="BOTTOM" BORDER="0"
+ SRC="./comp_heatmap.png"
+ ALT="Image comp_heatmap"></TD></TR>
+</TABLE>
+</DIV>
+Figure <A HREF="#fig:comp_heatmap">5</A> shows the density of venues in competition with the proposed diner.
+	The competition heat map suggests that competition is relatively consistent throughout Brooklyn.
+	There may be slightly more competition in the regions found to have the greatest density of hipster-venues.
+	A hypothesis test could determine whether or not these regions deviate enough from the mean to be considered significantly different from the overall population of neighborhoods.
+	If the author had mor time, a hypothesis test would be conducted to confirm what the heat map is suggesting.
+	It is now assumed that the profile of regions varies with respect to the amount of hipster venues.
+	Each neighborhood holds a unique location in venue space.
+
+<P>
+To locate a neighborhood in venue space, a vector composed of the quantity of each type of category is used.
+	Hipster-space is a subset of venue-space and includes only the categories defined as indicators of the presence of members of the hipster subculture.
+	An array was created to hold the quantity of each type of hipster venues for each neighborhood.
+	Each neighborhood had the z-score computed for each type of hipster category.
+	The greater the z-score for each of the hipster categories within a neighborhood, the more likely that there is a presence fo hipsters in the neighborhood.
+	Below is a sample of the array containing the vectors for four neighborhoods.
+<BR>
+<DIV ALIGN="CENTER">
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="RIGHT">Neighborhood</TD>
+<TD ALIGN="CENTER">Bike Shop</TD>
+<TD ALIGN="CENTER">Flea Market</TD>
+<TD ALIGN="CENTER">Indie Movie Theater</TD>
+<TD ALIGN="CENTER">Organic Grocery</TD>
+</TR>
+<TR><TD ALIGN="RIGHT">143</TD>
+<TD ALIGN="CENTER">0</TD>
+<TD ALIGN="CENTER">0</TD>
+<TD ALIGN="CENTER">0</TD>
+<TD ALIGN="CENTER">0</TD>
+</TR>
+<TR><TD ALIGN="RIGHT">144</TD>
+<TD ALIGN="CENTER">1</TD>
+<TD ALIGN="CENTER">0</TD>
+<TD ALIGN="CENTER">1</TD>
+<TD ALIGN="CENTER">0</TD>
+</TR>
+<TR><TD ALIGN="RIGHT">145</TD>
+<TD ALIGN="CENTER">1</TD>
+<TD ALIGN="CENTER">2</TD>
+<TD ALIGN="CENTER">0</TD>
+<TD ALIGN="CENTER">0</TD>
+</TR>
+<TR><TD ALIGN="RIGHT">146</TD>
+<TD ALIGN="CENTER">0</TD>
+<TD ALIGN="CENTER">2</TD>
+<TD ALIGN="CENTER">2</TD>
+<TD ALIGN="CENTER">0</TD>
+</TR>
+</TABLE>
+</DIV>
+
+<P>
+Histograms were created to visualize the z-score frequency of the hipster-indicating venues. 	
+<BR>
+<DIV ALIGN="CENTER"><A NAME="fig:zscores"></A><A NAME="75"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 6:</STRONG>
+Z-scores were calculated for venues that indicate the presence of hipsters</CAPTION>
+<TR><TD><IMG
+  WIDTH="650" HEIGHT="366" ALIGN="BOTTOM" BORDER="0"
+ SRC="./zscores.png"
+ ALT="Image zscores"></TD></TR>
+</TABLE>
+</DIV>
+The z-score histograms for the hipster-venues are all significantly skewed to the right. 
+	Obviously, this indicates the lower bound for the number of venues a neighborhood can have.
+	It is likely that the z-score distribution for all types of venue skew to the right since they all share this feature.
+	Below descriptive statistics for the selected categories are tabulated.
+<BR>
+<DIV ALIGN="CENTER">
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="CENTER">&nbsp;</TD>
+<TD ALIGN="CENTER">Bike Shop</TD>
+<TD ALIGN="CENTER">Flea Market</TD>
+<TD ALIGN="CENTER">Indie Movie Theater</TD>
+<TD ALIGN="CENTER">Organic Grocery</TD>
+</TR>
+<TR><TD ALIGN="CENTER"><SPAN CLASS="MATH"></SPAN></TD>
+<TD ALIGN="CENTER">0.699</TD>
+<TD ALIGN="CENTER">0.279</TD>
+<TD ALIGN="CENTER">0.213</TD>
+<TD ALIGN="CENTER">0.126</TD>
+</TR>
+<TR><TD ALIGN="CENTER"><SPAN CLASS="MATH"></SPAN></TD>
+<TD ALIGN="CENTER">1.246</TD>
+<TD ALIGN="CENTER">0.766</TD>
+<TD ALIGN="CENTER">0.623</TD>
+<TD ALIGN="CENTER">0.433</TD>
+</TR>
+<TR><TD ALIGN="CENTER">Median</TD>
+<TD ALIGN="CENTER">0</TD>
+<TD ALIGN="CENTER">0</TD>
+<TD ALIGN="CENTER">0</TD>
+<TD ALIGN="CENTER">0</TD>
+</TR>
+<TR><TD ALIGN="CENTER">Mode</TD>
+<TD ALIGN="CENTER">0 (117)</TD>
+<TD ALIGN="CENTER">0 (146)</TD>
+<TD ALIGN="CENTER">0 (157)</TD>
+<TD ALIGN="CENTER">0 (164)</TD>
+</TR>
+<TR><TD ALIGN="CENTER">Skew</TD>
+<TD ALIGN="CENTER">2.327</TD>
+<TD ALIGN="CENTER">6.175</TD>
+<TD ALIGN="CENTER">4.052</TD>
+<TD ALIGN="CENTER">5.146</TD>
+</TR>
+</TABLE>
+</DIV>
+<H2><A NAME="SECTION00032000000000000000">
+Machine Learning</A>
+</H2>
+	An attempt was made to cluster neighborhoods according to the density of hipster-indicative venues.
+	The strategy was to cluster together neighborhoods of low-density.
+	Those that remain after clustering have any density except low-density.
+	To select a value for epsilon in DBSCAN, the k-nearest neighbor algorithm was used to find the distance between points.
+
+<DIV ALIGN="CENTER"><A NAME="fig:knn"></A><A NAME="87"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 7:</STRONG>
+The distance between points was calculated with kNN.</CAPTION>
+<TR><TD><IMG
+  WIDTH="650" HEIGHT="362" ALIGN="BOTTOM" BORDER="0"
+ SRC="./knn.png"
+ ALT="Image knn"></TD></TR>
+</TABLE>
+</DIV>
+The graph shows that about 80% of the neighborhoods are within a distance of one from the origin of hipster-space.
+	By setting <SPAN CLASS="MATH"></SPAN> in DBSCAN equal to 1.4, DBSCAN will group together the neighborhoods that have hipster venues within 1.4 distance units from a core point.
+	Neighborhoods will be considered core points if they have a minimum number of points within a distance <SPAN CLASS="MATH"></SPAN> of the it.
+	Using the good-choice method, the minimum number of points required to be considered a cluster was set to 9.
+	This will have the effect of not creating multiple small clusters around irregular features in the data.
+	These irregular neighborhoods will be assigned to the outlier cluster.
+
+<P>
+DBSCAN created four clusters from the data.
+	The number of neighborhoods in each cluster is given as follows:
+
+<UL>
+<LI>Cluster 0:	138
+</LI>
+<LI>Cluster 1:	9
+</LI>
+<LI>Cluster 2:	11
+</LI>
+<LI>Outliers:		25
+</LI>
+</UL>
+
+<P>
+A map of the clusters generated is visualized in figure <A HREF="#fig:cluster">8</A>.
+	Each neighborhood is represented on the map by a circle of radius 600m.
+	The color of the circle represents the cluster membership for that neighborhood.
+	Each color was generated algorithmically to give maximum distinction between colors.
+	For a number of clusters less than seven, this strategy gives visually distinct results.
+	For a large number of clusters, a different visualization strategy must be employed.
+
+<DIV ALIGN="CENTER"><A NAME="fig:cluster"></A><A NAME="95"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 8:</STRONG>
+The distance between points was calculated with kNN.</CAPTION>
+<TR><TD><IMG
+  WIDTH="650" HEIGHT="487" ALIGN="BOTTOM" BORDER="0"
+ SRC="./cluster.png"
+ ALT="Image cluster"></TD></TR>
+</TABLE>
+</DIV>
+
+<H2><A NAME="SECTION00033000000000000000">
+Optimization</A>
+</H2>
+	To select one neighborhood over another for the proposed diner, a cost-function was defined.
+	The cost function was defined to account for for the criteria set forth in the business problem.
+	In summary, these criteria are that a location must have:
+<DL COMPACT>
+<DD>Many hipsters, as close as possible
+	
+</DD>
+<DD>Little competition, as far away asd possible.
+	
+</DD>
+<DD>A short distance between the neighborhood and major transportation infrastructure.
+</DD>
+</DL>
+	To describe if a venue is close by, a function was defined to calculate the venue's closeness.
+	The data provided by Foursquare is how far away a venue is from a neighborhood.
+	This is related to how close it is, but also the opposite.
+	Therefore it was said that the closeness <SPAN CLASS="MATH"></SPAN> of a venue is given by the equation:
+<BR>
+<P>
+<IMG SRC="./closeness.png">
+<P>
+It was necessary to calculate the closeness of both hipster venues as well as competitive ones.
+	To mirror this fact, venue space was subdivided into hipster-space and competition-space.
+	Hipster-space contains the coordinates, in number of hipster-type categories, for all neighborhoods.
+	Competition space is then defined similarly for all types of category that are not those designated to be indicative of hipsters.
+	A proximity score <SPAN CLASS="MATH"></SPAN> was then calculated to reflect the number and proximity of both hipster venues and competitive venues for each neighborhood.
+<BR>
+<P>
+<IMG SRC="./proxscore.png">
+<P>
+The Haversine equation was used to calculate the distance for each neighborhood and each of the three bridges.
+	The Haversine equation, given two pair of coordinates in degrees North and West, calculates the great-circle distance between the two points.
+	Of the three distances for each neighborhood, the smallest one is included as a ratio to the diameter of the target region in the scoring vector <SPAN CLASS="MATH"></SPAN> as component <SPAN CLASS="MATH"></SPAN>
+<BR>
+<P>
+The Haversine Equation:
+<BR>
+<P>
+<IMG SRC="./bridge.png">
+<P>
+The bridge component is added to the proximity score to create the score vector.
+<BR>
+<P>
+<IMG SRC="./score.png">
+<P>
+An array of containing the components of the score vector for each neighborhood was created.
+	Each component of the score vector describes one of the criteria set forth for the business problem.
+	A sample of the score vector values for is shown below.
+<DIV ALIGN="CENTER">
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="CENTER"><SPAN CLASS="MATH"></SPAN></TD>
+<TD ALIGN="CENTER"><SPAN CLASS="MATH"></SPAN></TD>
+<TD ALIGN="CENTER"><SPAN CLASS="MATH"></SPAN></TD>
+</TR>
+<TR><TD ALIGN="CENTER">0.</TD>
+<TD ALIGN="CENTER">2.76836158</TD>
+<TD ALIGN="CENTER">0.85471729</TD>
+</TR>
+<TR><TD ALIGN="CENTER">0.</TD>
+<TD ALIGN="CENTER">12.1819209</TD>
+<TD ALIGN="CENTER">0.73645233</TD>
+</TR>
+<TR><TD ALIGN="CENTER">1.40451977</TD>
+<TD ALIGN="CENTER">19.66892655</TD>
+<TD ALIGN="CENTER">0.75877421</TD>
+</TR>
+<TR><TD ALIGN="CENTER">4.16271186</TD>
+<TD ALIGN="CENTER">3.03615819</TD>
+<TD ALIGN="CENTER">0.78680609</TD>
+</TR>
+<TR><TD ALIGN="CENTER">0.</TD>
+<TD ALIGN="CENTER">1.8779661</TD>
+<TD ALIGN="CENTER">0.81996254</TD>
+</TR>
+</TABLE>
+</DIV>
+
+<P>
+A cost function was then defined to value each neighborhood's score vector.
+	The objective of the cost function is to rank neighborhood in their ability to satisfy the criteria of the business problem.
+	It was arbitrarily chosen that the lowest values produced by the cost function would be the neighborhoods that best meet the criteria.
+	The cost function was defined as follows:
+<DIV ALIGN="CENTER">
+<!-- MATH
+ $\displaystyle{O_H = -h +h\frac{c}{C_{max}}+(1+b)^2}$
+ -->
+<SPAN CLASS="MATH"></SPAN>
+</DIV>	
+
+<P>
+There are three terms in the cost function.
+	The first term is the negated hipster component of the score vector.
+	Neighborhoods with a large hipster component are preferred in this way.
+	The term is negated because of the decision to make the objective of the best neighborhood as small as possible.
+	The second term of the cost function is the product of the hipster component of a neighborhood with the ratio of the neighborhoods competition component and the maximum competition component of any neighborhood.
+	This term will penalize neighborhoods that have a large hipster component as well as a large competition component.
+	Finally, the third term is related to the square of the bridge component.
+	This term is added to select from multiple neighborhoods with similar competition and hipster scores the one closest to the bridges.
+
+<P>
+The value of the cost function was calculated for each neighborhood.
+	A hexadecimal color value was generated for each neighborhood based upon its cost-function value.
+	A list was created of the neighborhoods with the lowest cost function values.
+	The results were plotted onto the map in figure <A HREF="#fig:scoremap">9</A>.
+<BR>
+<DIV ALIGN="CENTER"><A NAME="fig:scoremap"></A><A NAME="151"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 9:</STRONG>
+The cost function was evaluated for each neighborhood. Neighborhoods with the lowest score are marked.</CAPTION>
+<TR><TD><IMG
+  WIDTH="650" HEIGHT="486" ALIGN="BOTTOM" BORDER="0"
+ SRC="./scoremap.png"
+ ALT="Image scoremap"></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+
+<H1><A NAME="SECTION00040000000000000000">
+Results</A>
+</H1>
+
+<P>
+A list of  ten neighborhoods with the lowest cost-function values was compiled.
+	An inner join was performed with all clusters with the exception of cluster number 0.
+	Including regions of open water, cluster 0 is a low-hipster density cluster.
+	The following list was produced.
+	Optimal locations are within 600m of the points specified.
+
+<P>
+<DL COMPACT>
+<DD>748 Chauncey Street, Brooklyn New York 11207
+	
+</DD>
+<DD>127 Saint James Place, Clinton Hill Stone Street Historic District 
+	
+</DD>
+<DD>221 Middleton Street, Brooklyn New York 11206
+	
+</DD>
+<DD>226 Moore Street, Brooklyn New York 11206
+	
+</DD>
+<DD>North 10th Street Brooklyn, Kings County 11211 
+	
+</DD>
+<DD>1377 Brooklyn Avenue, Brooklyn Community District 17, New York
+	
+</DD>
+<DD>52 39th Street, Sunset Park Stone Street Historic District 
+	
+</DD>
+<DD>371 Van Brunt Street, Red Hook Stone Street Historic District 
+	
+</DD>
+<DD>868 Bedford Avenue, Brooklyn New York 11205
+</DD>
+</DL>
+
+<P>
+Figure <A HREF="#fig:csmap">10</A> marks the neighborhoods above on the DBSCAN cluster map.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="fig:csmap"></A><A NAME="160"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 10:</STRONG>
+The cost function was evaluated for each neighborhood. Neighborhoods with the lowest score are marked.</CAPTION>
+<TR><TD><IMG
+  WIDTH="650" HEIGHT="488" ALIGN="BOTTOM" BORDER="0"
+ SRC="./csmap.png"
+ ALT="Image csmap"></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+
+<H1><A NAME="SECTION00050000000000000000">
+Discussion</A>
+</H1>
+	Two models were used to analyze this data.
+	The first model was produced by using the DBSCAN algorithm to cluster all neighborhoods based upon the quantity of venues deemed to be hipster related within.
+	This model produced four clusters.
+	DBSCAN created a cluster that includes regions of Upper New York Bay and many neighborhoods in the target region.
+	This is remarkably revealing.
+	Neighborhoods in this cluster have low-hipster venue density.
+
+<P>
+The second model used was a purpose designed cost function.
+	The cost function model valued each neighborhood according to the criteria set for by the business problem.
+	Neighborhoods selected by this model are in different regions of Brooklyn.
+	Remarkably, there is a correlation between the two models.
+	Nine of ten neighborhoods with the lowest cost function value also clustered out of of the low-density cluster.
+
+<P>
+There is agreement between the models.
+	Both models indicate the neighborhoods specified meet the criteria of the business problem.
+	The locations specified are recommended for further review by stakeholders.
+
+<P>
+
+<H1><A NAME="SECTION00060000000000000000"></A><A NAME="conclusions"></A>
+<BR>
+Conclusion
+</H1>
+	There are many people who live in New York City's borough of Brooklyn.
+	This gives rise to different demographic profiles in different regions.
+	These regions can be targeted to market to specific audiences.
+	Through data science these profiles and regions may be revealed.
+
+<BR></DIV>
+<ADDRESS>
+
+2020-12-20
+</ADDRESS>
+</BODY>
+</HTML>

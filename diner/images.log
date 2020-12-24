@@ -1,0 +1,316 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/pkgsrc) (preloaded format=latex 2020.12.20)  20 DEC 2020 19:25
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**./images.tex
+(./images.tex
+LaTeX2e <2020-02-02> patch level 5
+
+(/usr/pkg/share/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2019/12/20 v1.4l Standard LaTeX document class
+(/usr/pkg/share/texmf-dist/tex/latex/base/size12.clo
+File: size12.clo 2019/12/20 v1.4l Standard LaTeX file (size option)
+)
+\c@part=\count80
+\c@section=\count81
+\c@subsection=\count82
+\c@subsubsection=\count83
+\c@paragraph=\count84
+\c@subparagraph=\count85
+\c@figure=\count86
+\c@table=\count87
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+) (/usr/pkg/share/texmf-dist/tex/latex/base/ifthen.sty
+Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
+) (/usr/pkg/share/texmf-dist/tex/latex/geometry/geometry.sty
+Package: geometry 2020/01/02 v5.9 Page Geometry
+(/usr/pkg/share/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks15
+) (/usr/pkg/share/texmf-dist/tex/generic/iftex/ifvtex.sty
+Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
+(/usr/pkg/share/texmf-dist/tex/generic/iftex/iftex.sty
+Package: iftex 2020/03/06 v1.0d TeX engine tests
+))
+\Gm@cnth=\count88
+\Gm@cntv=\count89
+\c@Gm@tempcnt=\count90
+\Gm@bindingoffset=\dimen103
+\Gm@wd@mp=\dimen104
+\Gm@odd@mp=\dimen105
+\Gm@even@mp=\dimen106
+\Gm@layoutwidth=\dimen107
+\Gm@layoutheight=\dimen108
+\Gm@layouthoffset=\dimen109
+\Gm@layoutvoffset=\dimen110
+\Gm@dimlist=\toks16
+) (/usr/pkg/share/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count91
+\float@exts=\toks17
+\float@box=\box27
+\@float@everytoks=\toks18
+\@floatcapt=\box28
+) (/usr/pkg/share/texmf-dist/tex/latex/enumitem/enumitem.sty
+Package: enumitem 2019/06/20 v3.9 Customized lists
+\labelindent=\skip43
+\enit@outerparindent=\dimen111
+\enit@toks=\toks19
+\enit@inbox=\box29
+\enit@count@id=\count92
+\enitdp@description=\count93
+) (/usr/pkg/share/texmf-dist/tex/latex/tools/indentfirst.sty
+Package: indentfirst 1995/11/23 v1.03 Indent first paragraph (DPC)
+) (/usr/pkg/share/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2019/11/30 v1.2a Enhanced LaTeX Graphics (DPC,SPQR)
+(/usr/pkg/share/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2019/11/30 v1.4a Standard LaTeX Graphics (DPC,SPQR)
+(/usr/pkg/share/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
+) (/usr/pkg/share/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: dvips.def on input line 105.
+(/usr/pkg/share/texmf-dist/tex/latex/graphics-def/dvips.def
+File: dvips.def 2017/06/20 v3.1d Graphics/color driver for dvips
+))
+\Gin@req@height=\dimen112
+\Gin@req@width=\dimen113
+) (/usr/pkg/share/texmf-dist/tex/latex/graphics/color.sty
+Package: color 2019/11/23 v1.2a Standard LaTeX Color (DPC)
+(/usr/pkg/share/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package color Info: Driver file: dvips.def on input line 147.
+(/usr/pkg/share/texmf-dist/tex/latex/graphics/dvipsnam.def
+File: dvipsnam.def 2016/06/17 v3.0m Driver-dependent file (DPC,SPQR)
+)) (/usr/pkg/share/texmf-dist/tex/latex/base/inputenc.sty
+Package: inputenc 2018/08/11 v1.3c Input encoding file
+\inpenc@prehook=\toks20
+\inpenc@posthook=\toks21
+)
+\sizebox=\box30
+\lthtmlwrite=\write3
+(./images.aux)
+\openout1 = `images.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 124.
+LaTeX Font Info:    ... okay on input line 124.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 124.
+LaTeX Font Info:    ... okay on input line 124.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 124.
+LaTeX Font Info:    ... okay on input line 124.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 124.
+LaTeX Font Info:    ... okay on input line 124.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 124.
+LaTeX Font Info:    ... okay on input line 124.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 124.
+LaTeX Font Info:    ... okay on input line 124.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 124.
+LaTeX Font Info:    ... okay on input line 124.
+*geometry* driver: auto-detecting
+*geometry* detected driver: dvips
+*geometry* verbose mode - [ preamble ] result:
+* driver: dvips
+* paper: <default>
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: 
+* h-part:(L,W,R)=(72.26999pt, 469.75502pt, 72.26999pt)
+* v-part:(T,H,B)=(72.26999pt, 650.43001pt, 72.26999pt)
+* \paperwidth=614.295pt
+* \paperheight=794.96999pt
+* \textwidth=349.0pt
+* \textheight=680.43001pt
+* \oddsidemargin=0.0pt
+* \evensidemargin=0.0pt
+* \topmargin=0.0pt
+* \headheight=0.0pt
+* \headsep=0.0pt
+* \topskip=0.00003pt
+* \footskip=0.0pt
+* \marginparwidth=44.0pt
+* \marginparsep=10.0pt
+* \columnsep=10.0pt
+* \skip\footins=10.8pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+
+latex2htmlLength hsize=349.0pt
+
+latex2htmlLength vsize=680.43001pt
+
+latex2htmlLength hoffset=0.0pt
+
+latex2htmlLength voffset=0.0pt
+
+latex2htmlLength topmargin=0.0pt
+
+latex2htmlLength topskip=0.00003pt
+
+latex2htmlLength headheight=0.0pt
+
+latex2htmlLength headsep=0.0pt
+
+latex2htmlLength parskip=0.0pt plus 1.0pt
+
+latex2htmlLength oddsidemargin=0.0pt
+
+latex2htmlLength evensidemargin=0.0pt
+
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 158.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 158.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 158.
+l2hSize :tex2html_wrap_inline182:7.75pt::0.0pt::7.26456pt.
+[1
+
+
+
+]
+l2hSize :tex2html_wrap_inline184:7.75pt::0.0pt::7.69649pt.
+[2
+
+
+]
+l2hSize :tex2html_wrap_inline186:7.75pt::0.0pt::5.33192pt.
+[3
+
+
+]
+l2hSize :tex2html_wrap_inline190:8.2pt::0.0pt::9.85576pt.
+[4
+
+
+]
+l2hSize :tex2html_wrap_inline192:16.9514pt::16.9514pt::96.07751pt.
+[5
+
+
+]
+l2hSize :tex2html_wrap_inline194:8.83331pt::8.83331pt::215.88138pt.
+[6
+
+
+]
+l2hSize :tex2html_wrap_inline196:8.83331pt::8.83331pt::128.31796pt.
+[7
+
+
+]
+l2hSize :tex2html_wrap_inline198:9.5pt::9.5pt::163.08548pt.
+[8
+
+
+]
+l2hSize :tex2html_wrap_inline200:8.7pt::8.7pt::18.43787pt.
+[9
+
+
+]
+l2hSize :tex2html_wrap_inline202:13.72227pt::13.72227pt::211.0012pt.
+[10
+
+
+]
+l2hSize :tex2html_wrap_inline204:9.5pt::9.5pt::240.88528pt.
+[11
+
+
+]
+l2hSize :tex2html_wrap_inline206:8.83331pt::8.83331pt::164.11014pt.
+[12
+
+
+]
+l2hSize :tex2html_wrap_inline208:8.83331pt::8.83331pt::186.8703pt.
+[13
+
+
+]
+l2hSize :tex2html_wrap_inline210:11.99995pt::11.99995pt::95.46806pt.
+[14
+
+
+]
+l2hSize :tex2html_wrap_inline212:8.83331pt::8.83331pt::117.73795pt.
+[15
+
+
+]
+l2hSize :tex2html_wrap_inline214:11.58664pt::0.0pt::8.51245pt.
+[16
+
+
+]
+l2hSize :tex2html_wrap_inline216:12.08664pt::12.08664pt::20.87637pt.
+[17
+
+
+]
+l2hSize :tex2html_wrap_inline218:22.94595pt::22.94595pt::375.3013pt.
+
+Overfull \hbox (29.68628pt too wide) in paragraph at lines 263--264
+[]|[] 
+ []
+
+[18
+
+
+]
+l2hSize :tex2html_wrap_inline220:17.61809pt::17.61809pt::120.67296pt.
+[19
+
+
+]
+l2hSize :tex2html_wrap_inline222:12.08664pt::12.08664pt::81.06529pt.
+[20
+
+
+]
+l2hSize :tex2html_wrap_inline224:12.08664pt::12.08664pt::94.2949pt.
+[21
+
+
+]
+l2hSize :tex2html_wrap_inline226:11.49995pt::0.0pt::7.35135pt.
+[22
+
+
+]
+l2hSize :tex2html_wrap_inline228:8.33331pt::0.0pt::5.6444pt.
+[23
+
+
+]
+l2hSize :tex2html_wrap_inline230:11.49995pt::0.0pt::5.58328pt.
+[24
+
+
+]
+l2hSize :tex2html_wrap_inline232:13.78476pt::13.78476pt::152.63261pt.
+[25
+
+
+] (./images.aux) ) 
+Here is how much of TeX's memory you used:
+ 1750 strings out of 492937
+ 24231 string characters out of 6156564
+ 97350 words of memory out of 5000000
+ 7046 multiletter control sequences out of 15000+600000
+ 6376 words of font info for 23 fonts, out of 8000000 for 9000
+ 14 hyphenation exceptions out of 8191
+ 30i,6n,34p,288b,137s stack positions out of 5000i,500n,10000p,200000b,80000s
+
+Output written on images.dvi (25 pages, 7064 bytes).

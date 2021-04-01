@@ -1,12 +1,14 @@
-html {
+
+/*html {
  background-image: url(obsd.jpg);
  background-repeat: repeat;
-}
+}*/
+
 
 body {
  margin: 10px 10px 0px 0px;
  padding: 20px 0px 0px 20px;
- /* background-color: #778899;*/
+ background-color: #778899;
 }
 img { 
   float: right;  
@@ -15,6 +17,10 @@ img {
 
 #main-table table {
  border: 1px solid black;
+}
+
+table[id="title-box"] {
+ border: 0;
 }
 
 table[id="main-table"] {
@@ -40,6 +46,11 @@ p {
  font-size: 16px;
  color: #000000;
 }
+
+p[id="keywords"] {
+ white-space: nowrap;
+}
+
 h1 {
  font-family: sans-serif, Arial, Helvetica, sans-serif;
  font-size: 36px;
@@ -53,8 +64,6 @@ h2 {
  font-weight: bold;
  color: #000000;
 }
-
-
 
 a:link {
  font-weight: normal;
@@ -75,8 +84,8 @@ a:hover {
  font-size: 16px;
  font-family: sans-serif, Arial, Helvetica, sans-serif;
  text-decoration: none;
- color: #0000cc;
- background: #ff9933;
+ color: #ffffff;
+ background: #8888cc;
  }
 a:active {
  font-weight: normal;
@@ -92,4 +101,5 @@ a:active {
  list-style-image: url(images/bullet.gif);
  font-family: sans-serif, Arial, Helvetica, sans-serif;
  font-size: 16px;
+ color: #000000;
 }

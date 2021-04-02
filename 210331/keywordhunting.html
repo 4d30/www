@@ -24,7 +24,7 @@
 	<center><h1>How to determine which skills to put on a resume</h1></center>
 	<div id="inner">
 	<img style="float: right; padding: 0px 5px;" src="tools.jpg" title="Photo by J Boontie from FreeImages" width="33%" >
-	<p>
+	<p><b>This page is under construction.</b><br><br>
 	<b>You have lots of skills, too many to fit on a one-page resume.</b><br>
 	&nbspWe develop skills over time, usually lots of them.
 	Unfortunately, hiring managers don't have the time, energy, or need to hear about each and every skill you've developed over your lifetime.
@@ -41,7 +41,7 @@
 		<li>Parse search results to find URLs of all job description HTML documents with <a href="https://crummy.com/software/BeautifulSoup/bs4/doc/">BeautifulSoup</a></li>
 		<li>Download and cache job description HTML</li>
 		<li>Extract job description from HTML</li>
-		<li>Extract features from job description with <i>NLTK</i></li>
+		<li>Extract features from job description with <a href="https://www.nltk.org">NLTK</a></li>
 		<li>Calculate similarity between target job-post and every other cached post</li>
 		<li>Right outer join the target job-posting with every cached listing above a similarity threshold</li>
 	</ol>
@@ -90,10 +90,7 @@
 	Further, we can imagine this data is provided in a systematic way which links each listing to another page with a full job description.
 	An excellent way to navigate through HTML tags is with the <a href="https://crummy.com/software/BeautifulSoup/bs4/doc/">BeautifulSoup</a> module.
 	Let's make a guess that on infact.com, the job content is loaded dynamically through JavaScript.
-	Assume that inside a &lt;script&gt; tag each job-listing is contained inside a dictionary-like object called 'jobmap.'
-	<center>
-	<p style="text-align: justify; color: #444444; background-color: #ffffb0; padding: 5px 5px 5px 5px; max-width: 750px;">
-	<code> 
+	Assume that inside a &lt;script&gt; tag each job-listing is contained inside a dictionary-like object called 'jobmap.' <center> <p style="text-align: justify; color: #444444; background-color: #ffffb0; padding: 5px 5px 5px 5px; max-width: 750px;"> <code> 
 		import re&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#for regular expressions<br>
 		from bs4 import BeautifulSoup<br>
 		soup = BeautifulSoup(HTML, 'html.parser')<br>
@@ -125,8 +122,13 @@
 	</code>
 	</center>
 	<p><b>Download and cache all job description HTML documents</b><br>
-	This will closely the format we used earlier:
+	The HTTP-request part will closely the format we used earlier. 
+	What is different is new URLs are programatically created for each jobkey. 
+	Also the results are being cached on the disk.<br></p>
 	<center>
+	<p style="max-width: 400;">
+	<i>Nota bene: Caching page-content is often a violation of a webpage's TOS. Check in with the host's TOS and with your own morality before caching.</i>
+	</p>
 	<p style="text-align: justify; color: #444444; background-color: #ffffb0; padding: 5px 5px 5px 5px; max-width: 750px;">
 	<code> 
 	BASE_URL = 'https://www.infact.com/viewjob?jk='<br>

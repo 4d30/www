@@ -7,30 +7,148 @@
 <link rel="stylesheet" type="text/css" href="../style.css" media="screen"/>
 <style>
 #outer {}
-#inner {
+#inner {margin: auto;
 	line-height: 1.5em;
 	text-align: justify; 
 	min-width: 500px; 
-	max-width: 1000px; 
-	transform: translate(50%, 0);}
+	max-width: 1000px;
+	border: 1px solid black;
+	background-color: #ffffff;
+	padding: 5px 5px 5px 5px;
+	}
 
 
 </style>
 <!--   the head of the page   -->
 <body>
 	<center><h1>How to determine which skills to put on a resume</h1></center>
-
-	<div id="inner"><p style="border: 1px solid black; background-color: #ffffff; padding: 5px 5px 5px 5px"> 
-		<img style="float: right; padding: 0px 5px;" src="tools.jpg" title="Photo by J Boontie from FreeImages" >
-	People develop skills over time, usually lots of them.
+	<div id="inner">
+	<img style="float: right; padding: 0px 5px;" src="tools.jpg" title="Photo by J Boontie from FreeImages" width="33%" >
+	<p>
+	<b>You have lots of skills, too many to fit on a one-page resume.</b><br>
+	&nbspWe develop skills over time, usually lots of them.
 	Unfortunately, hiring managers don't have the time, energy, or need to hear about each and every skill you've developed over your lifetime.
+	Standard advice for job-seekers is to keep one's resume length fixed at one page.
 	When it comes to choosing which skills to list on a resume it is best practice to list the skills which one posesses that are related to the position.
+	This step includes reading the job description and identifying skills one has that would support this role.  <br><br>
 
-	</p></div>
+	<b>OK. I've read the description, reduced my margins, and am using a 10pt font. What else?</b><br>
+	&nbspWith the easy steps taken care of, it's time to work for it.
+	Our strategy will be to, given corpus a of similar job postings, suggest skills which are not in the description but are on similar listings.
+	Here's the process:<br></p>
+	<ol>
+		<li>Search jobsite for the target role with <a href="https://docs.python-requests.org/en/master/">requests</a></li>
+		<li>Parse search results to find URLs of all job description HTML documents with <a href="https://crummy.com/software/BeautifulSoup/bs4/doc/">BeautifulSoup</a></li>
+		<li>Download and cache job description HTML</li>
+		<li>Extract job description from HTML</li>
+		<li>Extract features from job description with <i>NLTK</i></li>
+		<li>Calculate similarity between target job-post and every other cached post</li>
+		<li>Right outer join the target job-posting with every cached listing above a similarity threshold</li>
+	</ol>
+	</div>
+
+	<center>
+	<p style="text-align: justify; border: 1px solid black; color: #ffffff; background-color: #000000; padding: 5px 5px 5px 5px; max-width: 750px;">
+
+	
+	<code style="background-color: #000000; color:#ffffff;">
+		$dict corpus<br>
+		&nbsp;&nbsp;From WordNet (r) 3.0 (2006) [wn]:<br>
+		&nbsp;&nbsp;&nbsp;corpus<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;n 2: a collection of writings; "he edited the Hemingway corpus"</code>
+	</p>
+	</center>
+
+	<div id="inner"><p>
+	<b>Search Jobsite for target role</b><br>
+	We're not going to use the web front-end for this.
+	That would take too much time.
+	Instead we are going to use Python's <i>requests</i> module to navigate.
+	Since it is a violation of the terms of service for many jobsites to download any content, I will use a fictitious the jobsite "infact.com" to demonstrate.
+	An example URL for a Data Scientist role in New York, NY could look like:</p>
+	<center>
+	<p style="text-align: justify; color: #444444; background-color: #ffffb0; padding: 5px 5px 5px 5px; max-width: 750px;">
+	<code>
+		#!/usr/bin/env python3<br>
+		ROLE = 'Data Scientist'<br>
+		LOCATION = 'New York, NY'<br>
+		URL = f'https://www.infact.com/jobs/?q={ROLE}&l={LOCATION}&sort=date'<br>
+	</code>
+	</p>
+	</center>
+	<p> Now we use the <a href="https://docs.python-requests.org/en/master/">requests</a> module to fetch the HTML from infact.com's server:</p>
+	<center>
+	<p style="text-align: justify; color: #444444; background-color: #ffffb0; padding: 5px 5px 5px 5px; max-width: 750px;">
+	<code>
+		import requests<br>
+		response = requests.get(URL)<br>
+		HTML = response.text()
+	</code>
+	</p>
+	</center><p>
+	Since infact.com is completely fictitious, we'll imagine to have an HTML document which contains the job listings for the role and location queried sorted by date posted.
+	Further, we can imagine this data is provided in a systematic way which links each listing to another page with a full job description.
+	An excellent way to navigate through HTML tags is with the <a href="https://crummy.com/software/BeautifulSoup/bs4/doc/">BeautifulSoup</a> module.
+	Let's make a guess that on infact.com, the job content is loaded dynamically through JavaScript.
+	Assume that inside a &lt;script&gt; tag each job-listing is contained inside a dictionary-like object called 'jobmap.'
+	<center>
+	<p style="text-align: justify; color: #444444; background-color: #ffffb0; padding: 5px 5px 5px 5px; max-width: 750px;">
+	<code> 
+		import re&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#for regular expressions<br>
+		from bs4 import BeautifulSoup<br>
+		soup = BeautifulSoup(HTML, 'html.parser')<br>
+		jobmap = soup.find(text=re.compile('jobmap'))
+	</code>
+	</p>
+	</center>
+	<p>
+	<b>Parse search results to find URLs of all job description HTML documents</b><br>
+	The jobmap proably contains lots of data like a unique identifier of the role to be filled, the employer, the date posted, etc..
+	Let's call the unique identifier a jobkey or <b>jk</b> for short.
+	Although not incredibly challenging, this part can get pretty hacky.
+	With some looping, logic, and string functions, I leave it to the reader to extract the jobkeys for each job-posting.
+	Be creative :)
+	<br><br>
+	With a list or dictionary of jobkeys, we can use the <i>requests</i> module to fetch the HTML document which contains the full job-description.
+	Let's assume we have a dictionary of the following format:<br>
+	<center>
+	<code>
+	<table style="background-color: #b0b0ff;">
+		<tr><td></td><td>jk</td></tr>
+		<tr><td>1</td><td>038eef0fed4b586d</td></tr>
+		<tr><td>2</td><td>96a3d424eb8855e1</td></tr>
+		<tr><td>3</td><td>faf9d0ffb3232d4f</td></tr>
+		<tr><td>...</td><td>...</td></tr>
+		<tr><td>N</td><td>ffffffffffffffff</td></tr>
+		
+	</table>
+	</code>
+	</center>
+	<p><b>Download and cache all job description HTML documents</b><br>
+	This will closely the format we used earlier:
+	<center>
+	<p style="text-align: justify; color: #444444; background-color: #ffffb0; padding: 5px 5px 5px 5px; max-width: 750px;">
+	<code> 
+	BASE_URL = 'https://www.infact.com/viewjob?jk='<br>
+	for jk in jobmap['jk']:<br>
+	&nbsp;&nbsp;&nbsp;filename = './cache/'+jk<br>
+	&nbsp;&nbsp;&nbsp;if os.path.isfile(filename):<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;continue<br>
+	&nbsp;&nbsp;&nbsp;else:<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;URL = BASE_URL + jk<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;response = request.get(URL)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with open(filename,'w') as f:<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f.write(response.text)<br>
+
+	</code>
+	</p>
+	</center>
 
 
-	</td>
- <!--- the body of the page ---!>
+
+	</div>
+	
+<!--- the body of the page ---!>
 <!--   footnotes   -->
 
 </body>

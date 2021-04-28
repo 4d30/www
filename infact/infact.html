@@ -24,26 +24,26 @@
 	<center><h1>How to determine which skills to put on a resume</h1></center>
 	<div id="inner">
 	<img style="float: right; padding: 0px 5px;" src="tools.jpg" title="Photo by J Boontie from FreeImages" width="33%" >
-	<p><b>This page is under construction.</b><br><br>
-	<b>You have lots of skills, too many to fit on a one-page resume.</b><br>
-	&nbspWe develop skills over time, usually lots of them.
+	<p>
+	We develop many skills over time.
 	Unfortunately, hiring managers don't have the time, energy, or need to hear about each and every skill you've developed over your lifetime.
 	Standard advice for job-seekers is to keep one's resume length fixed at one page.
-	When it comes to choosing which skills to list on a resume it is best practice to list the skills which one posesses that are related to the position.
-	This step includes reading the job description and identifying skills one has that would support this role.  <br><br>
-
-	<b>OK. I've read the description, reduced my margins, and am using a 10pt font. What else?</b><br>
-	&nbspWith the easy steps taken care of, it's time to work for it.
-	Our strategy will be to, given corpus a of similar job postings, suggest skills which are not in the description but are on similar listings.
-	Here's the process:<br></p>
+	When it comes to choosing which skills to list on a resume it is best practice to list the skills which are closely related to the position.
+	This step includes reading the job description and identifying skills one has that would support this role. 
+	Let's do better.<br>
+	<br>
+	Objective:<br>
+	<b>Determine which terms are most relevant to a Data Scientist's resume in the New York City market.</b><br>
+	<br>
+	Procedure:</p>
 	<ol>
 		<li>Search jobsite for the target role with <a href="https://docs.python-requests.org/en/master/">requests</a></li>
-		<li>Parse search results to find URLs of all job description HTML documents with <a href="https://crummy.com/software/BeautifulSoup/bs4/doc/">BeautifulSoup</a></li>
+		<li>Parse <a href="https://crummy.com/software/BeautifulSoup/bs4/doc/">Soup</a> of search results to find URLs of all job description HTML documents</li> 
 		<li>Download and cache job description HTML</li>
-		<li>Extract job description from HTML</li>
-		<li>Extract features from job description with <a href="https://www.nltk.org">NLTK</a></li>
+		<li>Extract the job description from HTML</li>
+		<li>Extract features from each job description with <a href="https://www.nltk.org">NLTK</a></li>
 		<li>Calculate <a href="https://nlp.stanford.edu/IR-book/html/htmledition/tf-idf-weighting-1.html">tf-idf</a> for each feature</li>
-		<li>Filter and sort results, let the information swim to the top</li>
+		<li>Filter and sort results, information will float to the top</li>
 	</ol>
 	</div>
 
@@ -199,8 +199,6 @@
 
 	<center>
 	<p style="text-align: justify; border: 1px solid black; color: #ffffff; background-color: #000000; padding: 5px 5px 5px 5px; max-width: 750px;">
-
-	
 	<code style="background-color: #000000; color:#ffffff;">
 		$./process_content.py<br>
 		&nbsp;&nbsp;(('applied',), 32)<br>
@@ -235,6 +233,7 @@
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;termsindoc.update(get_terms(lemmas))<br>
 	&nbsp;&nbsp;&nbsp;return list(map(lambda x: x in in termsindoc.keys(), TERMS))
 	</code>
+	</p>
 	</center>
 	<p>
 	There are a few locally defined functions in the snippet above.
@@ -249,17 +248,147 @@
 	<a href="https://nlp.stanford.edu/IR-book/html/htmledition/sublinear-tf-scaling-1.html">Cambridge University</a> 
 	suggests a modification:</p>
 	<br>
-	<img style="display: block; margin-left: auto; margin-right: auto;" src="./wf.png"> <br>	
+	<img style="display: block; margin-left: auto; margin-right: auto;" src="./latex/eq1.png"> <br>	
 	<p>
-	Document frequency will follow a similar logarithmic treatment:<br>
-	<img style="display: block; margin-left: auto; margin-right: auto;" src="./idf.png"> <br>	
+	For document frequency I follow a similar logarithmic treatment:<br>
+	<br>
+	<img style="display: block; margin-left: auto; margin-right: auto;" src="./latex/eq2.png"> <br>
 	<br>	
+	Finally, we dot the vectors together to calculate tf-idf:<br>
 	<br>	
+	<img style="display: block; margin-left: auto; margin-right: auto;" src="./latex/eq3.png"> <br>
 	<br>	
+	Easy-peasy.<br>
+	<br>
+	<b>Filter & Sort</b><br>
+	There are many terms which are specific to a single document.
+	Since we're attempting to learn about the role as a whole, it is prudent to filter out some of the most unique terms.
+	I selected all terms which appeared in at least 1/8 of the number of documents.
+	One day I'd like to create a Term Count vs Terms in % of Documents curve and see the shape.
+	For now, I guess 1/8.
+	</p>
+	<center>
+	<p style="text-align: justify; color: #444444; background-color: #ffffb0; padding: 5px 5px 5px 5px; max-width: 750px;">
+	<code> 
+	df = pd.DataFrame.from_dict(term_counter)<br>
+	df['doc_count'] = doc_counter<br>
+	df['tf_corpus'] = list(map(logtf, df['term_count'])) <br>
+	df['idf'] = np.log(n_docs / df['doc_count'])<br>
+	df['tf-idf_corpus'] = df['tf_corpus'] * df['idf'] <br>
+	<br>
+	# Select only terms which appear in more than 1/8 of documents<br>
+	df = df[ df['doc_count'] &gt; len(listings)/8 ]<br>
+	df.sort_values(by='tf-idf_corpus',ascending=False).to_csv('./tfidf.csv')<br>
+	</code>
+	</p>
+	</center>
+	</div>
 
-
-
-
+	<center>
+	<p style="text-align: justify; border: 1px solid black; color: #ffffff; background-color: #000000; padding: 5px 5px 5px 5px; max-width: 750px;">
+	<code style="background-color: #000000; color:#ffffff;">
+		$column -t -s, &lt; ./tfidf.csv | head -n 50<br>
+		<table style="text-align: justify; color: #ffffff; width: 750px;">
+		<tr><td>term</td><td>term_count</td><td>doc_count</td><td>tf_corpus</td><td>idf</td><td>tf-idf_corpus</td></tr>
+		<tr><td>risk</td><td>177</td><td>47.0</td><td>6.176</td><td>2.5583</td><td>15.800</td></tr>
+		<tr><td>investment</td><td>100</td><td>40.0</td><td>5.605</td><td>2.719</td><td>15.244</td></tr>
+		<tr><td>healthcare</td><td>112</td><td>44.0</td><td>5.718</td><td>2.624</td><td>15.007</td></tr>
+		<tr><td>data analyst</td><td>153</td><td>52.0</td><td>6.030</td><td>2.457</td><td>14.818</td></tr>
+		<tr><td>medium</td><td>188</td><td>58.0</td><td>6.236</td><td>2.348</td><td>14.64</td></tr>
+		<tr><td>city</td><td>71</td><td>38.0</td><td>5.2626</td><td>2.7709</td><td>14.582</td></tr>
+		<tr><td>sale</td><td>113</td><td>49.0</td><td>5.727</td><td>2.516</td><td>14.414</td></tr>
+		<tr><td>agency</td><td>81</td><td>42.0</td><td>5.394</td><td>2.67</td><td>14.407</td></tr>
+		<tr><td>inc</td><td>70</td><td>39.0</td><td>5.248</td><td>2.7449</td><td>14.40</td></tr>
+		<tr><td>analytic</td><td>101</td><td>47.0</td><td>5.61</td><td>2.5583</td><td>14.36</td></tr>
+		<tr><td>colleague</td><td>63</td><td>39.0</td><td>5.143</td><td>2.7449</td><td>14.117</td></tr>
+		<tr><td>director</td><td>75</td><td>43.0</td><td>5.31</td><td>2.647</td><td>14.07</td></tr>
+		<tr><td>c</td><td>62</td><td>39.0</td><td>5.127</td><td>2.7449</td><td>14.073</td></tr>
+		<tr><td>dashboard</td><td>61</td><td>39.0</td><td>5.110</td><td>2.7449</td><td>14.029</td></tr>
+		<tr><td>portfolio</td><td>58</td><td>38.0</td><td>5.060</td><td>2.7709</td><td>14.02</td></tr>
+		<tr><td>integration</td><td>57</td><td>38.0</td><td>5.04</td><td>2.7709</td><td>13.974</td></tr>
+		<tr><td>associate</td><td>65</td><td>41.0</td><td>5.174</td><td>2.6949</td><td>13.944</td></tr>
+		<tr><td>data science team</td><td>62</td><td>40.0</td><td>5.127</td><td>2.719</td><td>13.944</td></tr>
+		<tr><td>senior data</td><td>78</td><td>45.0</td><td>5.356</td><td>2.6018</td><td>13.937</td></tr>
+		<tr><td>ml</td><td>151</td><td>60.0</td><td>6.017</td><td>2.3141</td><td>13.925</td></tr>
+		<tr><td>hand experience</td><td>56</td><td>38.0</td><td>5.02</td><td>2.7709</td><td>13.92</td></tr>
+		<tr><td>architecture</td><td>77</td><td>45.0</td><td>5.343</td><td>2.6018</td><td>13.903</td></tr>
+		<tr><td>operational</td><td>58</td><td>39.0</td><td>5.060</td><td>2.7449</td><td>13.890</td></tr>
+		<tr><td>america</td><td>55</td><td>38.0</td><td>5.007</td><td>2.7709</td><td>13.875</td></tr>
+		<tr><td>least</td><td>79</td><td>46.0</td><td>5.3694</td><td>2.5798</td><td>13.852</td></tr>
+		<tr><td>insurance</td><td>86</td><td>48.0</td><td>5.454</td><td>2.537</td><td>13.839</td></tr>
+		<tr><td>asset</td><td>68</td><td>43.0</td><td>5.219</td><td>2.647</td><td>13.81</td></tr>
+		<tr><td>natural</td><td>56</td><td>39.0</td><td>5.02</td><td>2.7449</td><td>13.794</td></tr>
+		<tr><td>firm</td><td>92</td><td>50.0</td><td>5.5217</td><td>2.4965</td><td>13.785</td></tr>
+		<tr><td>engagement</td><td>53</td><td>38.0</td><td>4.970</td><td>2.7709</td><td>13.772</td></tr>
+		<tr><td>science team</td><td>65</td><td>43.0</td><td>5.174</td><td>2.647</td><td>13.698</td></tr>
+		<tr><td>story</td><td>54</td><td>39.0</td><td>4.9889</td><td>2.7449</td><td>13.694</td></tr>
+		<tr><td>business intelligence</td><td>62</td><td>42.0</td><td>5.127</td><td>2.67</td><td>13.693</td></tr>
+		<tr><td>reporting</td><td>84</td><td>49.0</td><td>5.430</td><td>2.516</td><td>13.667</td></tr>
+		<tr><td>condition</td><td>67</td><td>44.0</td><td>5.204</td><td>2.624</td><td>13.658</td></tr>
+		<tr><td>outcome</td><td>58</td><td>41.0</td><td>5.060</td><td>2.6949</td><td>13.637</td></tr>
+		<tr><td>domain</td><td>55</td><td>40.0</td><td>5.007</td><td>2.719</td><td>13.</td></tr>
+		<tr><td>care</td><td>125</td><td>59.0</td><td>5.8283</td><td>2.3309</td><td>13.585</td></tr>
+		<tr><td>b</td><td>49</td><td>38.0</td><td>4.891</td><td>2.7709</td><td>13.55</td></tr>
+		<tr><td>8</td><td>49</td><td>38.0</td><td>4.891</td><td>2.7709</td><td>13.55</td></tr>
+		<tr><td>enterprise</td><td>86</td><td>51.0</td><td>5.454</td><td>2.4767</td><td>13.50</td></tr>
+		<tr><td>influence</td><td>48</td><td>38.0</td><td>4.871</td><td>2.7709</td><td>13.497</td></tr>
+		<tr><td>experience use</td><td>48</td><td>38.0</td><td>4.871</td><td>2.7709</td><td>13.497</td></tr>
+		<tr><td>tech</td><td>74</td><td>48.0</td><td>5.30</td><td>2.537</td><td>13.458</td></tr>
+		<tr><td>content</td><td>84</td><td>51.0</td><td>5.430</td><td>2.4767</td><td>13.450</td></tr>
+		<tr><td>enhance</td><td>54</td><td>41.0</td><td>4.9889</td><td>2.6949</td><td>13.44</td></tr>
+		<tr><td>accommodation</td><td>95</td><td>54.0</td><td>5.553</td><td>2.419</td><td>13.437</td></tr>
+		<tr><td>define</td><td>70</td><td>47.0</td><td>5.248</td><td>2.5583</td><td>13.427</td></tr>
+		<tr><td>ai</td><td>192</td><td>71.0</td><td>6.2574</td><td>2.145</td><td>13.42</td></tr>
+		<tr><td>assist</td><td>56</td><td>42.0</td><td>5.02</td><td>2.67</td><td>13.422</td></tr>
+		<tr><td>compute</td><td>56</td><td>42.0</td><td>5.02</td><td>2.67</td><td>13.422</td></tr>
+		<tr><td>operate</td><td>51</td><td>40.0</td><td>4.931</td><td>2.719</td><td>13.41</td></tr>
+		<tr><td>track</td><td>58</td><td>43.0</td><td>5.060</td><td>2.647</td><td>13.39</td></tr>
+		<tr><td>may</td><td>72</td><td>48.0</td><td>5.276</td><td>2.537</td><td>13.388</td></tr>
+		<tr><td>employment opportunity</td><td>46</td><td>38.0</td><td>4.828</td><td>2.7709</td><td>13.379</td></tr>
+		<tr><td>prior</td><td>46</td><td>38.0</td><td>4.828</td><td>2.7709</td><td>13.379</td></tr>
+		<tr><td>applicable</td><td>55</td><td>42.0</td><td>5.007</td><td>2.67</td><td>13.373</td></tr>
+		<tr><td>would</td><td>50</td><td>40.0</td><td>4.912</td><td>2.719</td><td>13.358</td></tr>
+		<tr><td>party</td><td>50</td><td>40.0</td><td>4.912</td><td>2.719</td><td>13.358</td></tr>
+		<tr><td>thrive</td><td>52</td><td>41.0</td><td>4.951</td><td>2.6949</td><td>13.343</td></tr>
+		<tr><td>brand</td><td>132</td><td>63.0</td><td>5.882</td><td>2.2653</td><td>13.32</td></tr>
+		<tr><td>give</td><td>59</td><td>44.0</td><td>5.07</td><td>2.624</td><td>13.325</td></tr>
+		<tr><td>internal external</td><td>47</td><td>39.0</td><td>4.850</td><td>2.7449</td><td>13.313</td></tr>
+		<tr><td>potential</td><td>47</td><td>39.0</td><td>4.850</td><td>2.7449</td><td>13.313</td></tr>
+		<tr><td>use data</td><td>51</td><td>41.0</td><td>4.931</td><td>2.6949</td><td>13.291</td></tr>
+		<tr><td>interest</td><td>66</td><td>47.0</td><td>5.189</td><td>2.5583</td><td>13.277</td></tr>
+		<tr><td>federal</td><td>53</td><td>42.0</td><td>4.970</td><td>2.67</td><td>13.27</td></tr>
+		<tr><td>direct</td><td>53</td><td>42.0</td><td>4.970</td><td>2.67</td><td>13.27</td></tr>
+		<tr><td>next</td><td>44</td><td>38.0</td><td>4.7841</td><td>2.7709</td><td>13.256</td></tr>
+		<tr><td>social</td><td>55</td><td>43.0</td><td>5.007</td><td>2.647</td><td>13.25</td></tr>
+		<tr><td>love</td><td>55</td><td>43.0</td><td>5.007</td><td>2.647</td><td>13.25</td></tr>
+		<tr><td>characteristic</td><td>46</td><td>39.0</td><td>4.828</td><td>2.7449</td><td>13.254</td></tr>
+		<tr><td>guide</td><td>46</td><td>39.0</td><td>4.828</td><td>2.7449</td><td>13.254</td></tr>
+		<tr><td>connect</td><td>46</td><td>39.0</td><td>4.828</td><td>2.7449</td><td>13.254</td></tr>
+		<tr><td>business need</td><td>48</td><td>40.0</td><td>4.871</td><td>2.719</td><td>13.247</td></tr>
+		<tr><td>point</td><td>57</td><td>44.0</td><td>5.04</td><td>2.624</td><td>13.23</td></tr>
+		<tr><td>4 year</td><td>57</td><td>44.0</td><td>5.04</td><td>2.624</td><td>13.23</td></tr>
+		<tr><td>record</td><td>57</td><td>44.0</td><td>5.04</td><td>2.624</td><td>13.23</td></tr>
+		<tr><td>best practice</td><td>59</td><td>45.0</td><td>5.07</td><td>2.6018</td><td>13.211</td></tr>
+		<tr><td>activity</td><td>73</td><td>50.0</td><td>5.290</td><td>2.4965</td><td>13.207</td></tr>
+		<tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
+		<tr><td>work</td><td>1393</td><td>291.0</td><td>8.239</td><td>0.735</td><td>6.058</td></tr>
+		</table>
+	</p>
+	</center>
+	<div id="inner"><p>
+	<p>
+	<b>Get Smart</b><br>
+	We've done it.
+	These terms may matter most when carefully choosing which characters to include on a resume.
+	Do have experience assessing risk?
+	If so, it'd be a good idea to highlight that.
+	Can you build a dashboard?
+	If not, now's a good time to learn.
+	The knowledge in this table is a goldmine.<br>
+	<br>
+	If you're feeling daring, it may be assumed that you have some of the more common skills if you include the less common. 
+	"Python" just so happens to fall 9 lines before the end of the list.
+	</p>
 	</div>
 	<br><br>	
 <!--- the body of the page ---!>

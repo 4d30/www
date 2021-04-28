@@ -42,8 +42,8 @@
 		<li>Download and cache job description HTML</li>
 		<li>Extract job description from HTML</li>
 		<li>Extract features from job description with <a href="https://www.nltk.org">NLTK</a></li>
-		<li>Calculate similarity between target job-post and every other cached post</li>
-		<li>Right outer join the target job-posting with every cached listing above a similarity threshold</li>
+		<li>Calculate <a href="https://nlp.stanford.edu/IR-book/html/htmledition/tf-idf-weighting-1.html">tf-idf</a> for each feature</li>
+		<li>Filter and sort results, let the information swim to the top</li>
 	</ol>
 	</div>
 
@@ -143,8 +143,120 @@
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f.write(response.text)<br>
 
 	</code>
+	</center>
+	</p>
+	<p>
+	<b>Process the beautiful content: TF-IDF </b><br>
+	Write some prose on tf-idf.<br>
+	<br>
+
+
+	<b>Count raw term frequency</b><br>
+	The task is to break down each job-description first into sentences and then into tokens.
+	Once we have tokens, stop-words will be filtered out and each term will be lemmatized with it's part of speech.
+	Finally, uni-, bi-, and tri-grams will be created from each sentence.
+	Of course one could proceed with larger grams, but going much further into gram-space tends to create a sparse dataset.
+	NLTK is a great tool for this task and others exist.
+	Finally, each processed feature will be counted.
+	</p>
+	<center>
+	<p style="text-align: justify; color: #444444; background-color: #ffffb0; padding: 5px 5px 5px 5px; max-width: 750px;">
+	<code> 
+	#!/usr/bin/env python3<br>
+	# "process_content.py"<br>
+	<br>
+	from nltk import pos_tag<br>
+	from nltk.tokenize import sent_tokenize, RegexpTokenizer<br>
+	from nltk.probability import Counter<br>
+	from nltk.corpus import stopwords, wordnet<br>
+	from nltk.stem import WordNetLemmatizer<br>
+	from nltk.util import ngrams<br>
+	<br>
+	tokenizer = RegexpTokenizer(r'\w+')<br>
+	wnl = WordNetLemmatizer()<br>
+	term_counter = Counter()<br>	
+	<br>
+	for file in files:<br>
+	&nbsp;&nbsp;&nbsp;raw = file.read().decode('utf8')<br>
+	&nbsp;&nbsp;&nbsp;raw = raw.lower()<br>
+	&nbsp;&nbsp;&nbsp;sent = tokenize(raw)<br>
+	&nbsp;&nbsp;&nbsp;words = tokenizer.tokenize(sent)<br>
+	&nbsp;&nbsp;&nbsp;tagged_words = pos_tag(words)<br>
+	&nbsp;&nbsp;&nbsp;filtered_words = [t for t in tagged_words if not t[0] in stop_words]<br>
+	&nbsp;&nbsp;lemmas = [wnl.lemmatize(w[0], pos=convert_function(w[1])) for w in filtered_words]<br>
+	&nbsp;&nbsp;&nbsp;for sentence in lemmas:<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for num in range(1,4):<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;grams = ngrams(sentence, num)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;term_counter.update(grams)<br>
+	[ print(v) for i, v in enumerate(term_counter.items()) if i &lt; 5 ]
+	</code>
+	</center>
+	</p>
+	<p>
+	The last line of the script prints out a little preview so we can be sure we're on the right track.
+	</p>
+	</div>
+
+	<center>
+	<p style="text-align: justify; border: 1px solid black; color: #ffffff; background-color: #000000; padding: 5px 5px 5px 5px; max-width: 750px;">
+
+	
+	<code style="background-color: #000000; color:#ffffff;">
+		$./process_content.py<br>
+		&nbsp;&nbsp;(('applied',), 32)<br>
+		&nbsp;&nbsp;(('commercial',), 42)<br>
+		&nbsp;&nbsp;(('artificial','intelligence',), 79)<br>
+		&nbsp;&nbsp;(('program',), 247)<br>
+		&nbsp;&nbsp;(('equal','opportunity','employer',), 105)<br>
 	</p>
 	</center>
+
+	<div id="inner"><p>
+	<b>Count raw document frequency</b><br>
+	We will use what we learned in the <i>tf</i> bit above to help us in the next part.
+	Namely, we now have a list of all of the features which appear in the corpus.
+	This list will be used to determine which features are in each document.
+	It is probably possible to determine document frequency at the same time as raw term frequnecy.
+	The added complexity probably isn't worth the efficiency.
+	</p>
+	<center>
+	<p style="text-align: justify; color: #444444; background-color: #ffffb0; padding: 5px 5px 5px 5px; max-width: 750px;">
+	<code> 
+	# Given an input list of TERMS and a file, this function returns a <br>
+	# list of bool for for each term.<br>
+	<br>
+	from nltk.probability import FreqDist<br>
+	<br>
+	def which&lowbar;terms&lowbar;in&lowbar;doc(TERMS, FILENAME):<br>
+	&nbsp;&nbsp;&nbsp;termsindoc= FreqDist()<br>
+	&nbsp;&nbsp;&nbsp;with open(FILENAME, 'rb') as f:<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sent = get_sentences(f)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lemmas = map(get_lemmas, sent)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;termsindoc.update(get_terms(lemmas))<br>
+	&nbsp;&nbsp;&nbsp;return list(map(lambda x: x in in termsindoc.keys(), TERMS))
+	</code>
+	</center>
+	<p>
+	There are a few locally defined functions in the snippet above.
+	Their function is self-evident and if you're interested in their 
+	definitions please refer to my source on 
+	<a href="https://github.com/4d30/infact/blob/main/descprocessing.py">GitHub</a>.  </p>
+	<p>
+	<b>Calculations</b><br>
+	There are a few different ways to calculate <i>term frequency</i> and <i>document frequency</i>.
+	The simplest is to just divide the number of occurances by the total number of values: terms or documents.
+	For the term frequency, 
+	<a href="https://nlp.stanford.edu/IR-book/html/htmledition/sublinear-tf-scaling-1.html">Cambridge University</a> 
+	suggests a modification:</p>
+	<br>
+	<img style="display: block; margin-left: auto; margin-right: auto;" src="./wf.png"> <br>	
+	<p>
+	Document frequency will follow a similar logarithmic treatment:<br>
+	<img style="display: block; margin-left: auto; margin-right: auto;" src="./idf.png"> <br>	
+	<br>	
+	<br>	
+	<br>	
+
 
 
 

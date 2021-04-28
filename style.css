@@ -10,7 +10,7 @@ body {
  padding: 20px 0px 0px 20px;
  background-color: #778899;
 }
-img { 
+img[id="index"] { 
   float: right;  
   margin: 5px;
 } 
